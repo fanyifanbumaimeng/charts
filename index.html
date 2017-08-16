@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div id="dv"></div>
+<script>
+
+
+    function Chart(option){
+        this.init(option)
+    }
+
+    Chart.prototype.init=function(option){
+        this.id= option.id;
+        var cas = document.createElement("canvas")
+        cas.width = option.width;
+        cas.height = option.height;
+        document.getElementById(this.id).appendChild(cas)
+    }
+
+    Chart.prototype.draw=function(){
+
+    }
+
+    var c = new Chart({
+        id:"dv",
+        width:500,
+        height:500,
+        x:200,
+        y:200,
+        r:100,
+        startAngle:0,
+        title:"饼状图",
+        series:{
+            name:"水果种类",
+            type:"pie",
+            radius:100,
+            center:[200,200],
+            data:[
+                {value:335, name:'苹果'},
+                {value:310, name:'甘蔗'},
+                {value:234, name:'草莓'},
+                {value:321, name:'芒果'},
+                {value:221, name:'葡萄'}
+            ]
+        }
+    })
+    c.draw()
+
+
+</script>
+</body>
+</html>
