@@ -18,10 +18,62 @@
         var cas = document.createElement("canvas")
         cas.width = option.width;
         cas.height = option.height;
-        document.getElementById(this.id).appendChild(cas)
+        document.getElementById(this.id).appendChild(cas);
+        this.ctx = cas.getContext("2d");
+        this.series = option.series;
+        this.startAngle = option.startAngle;
+        this.title = option.title;
+        this.x = option.x;
+        this.y = option.y;
+        this.radius = option.radius;
+    }
+    Chart.prototype.randomColor=function(){
+        var r = parseInt(Math.random()*255);
+        var g = parseInt(Math.random()*255);
+        var b = parseInt(Math.random()*255);
+        return "rgb("+r+","+g+","+b+")";
+    }
+    Chart.prototype.calSum = function(){
+
+        return this.series.data.map(function(v){
+            return v.value;
+        }).reduce(function(start,end){
+            return start+end;
+        })
+    }
+
+    Chart.prototype.calRadian= function(){
+        var sum = this.calSum();
+        this.radian = this.series.data.map(function(v){
+            return (v.value/sum)*Math.PI*2;
+        })
+
     }
 
     Chart.prototype.draw=function(){
+        this.calRadian();
+
+
+        var that = this;
+        this.series.data.forEach(function(v,i){
+            that.ctx.beginPath();
+            that.ctx.moveTo(that.x,that.y);
+            var color = that.randomColor();
+            that.ctx.fillStyle = color;
+            that.ctx.arc(that.x,that.y,that.radius,that.startAngle,that.startAngle+that.radian[i]);
+            that.ctx.closePath();
+            that.ctx.fill()
+
+
+
+            that.ctx.beginPath();
+
+            that.ctx.strokeStyle = color;
+
+            that.ctx.moveTo(that.x,that.y);
+
+            that.startAngle+=that.radian[i]
+        })
 
     }
 
@@ -31,7 +83,7 @@
         height:500,
         x:200,
         y:200,
-        r:100,
+        radius:100,
         startAngle:0,
         title:"饼状图",
         series:{
