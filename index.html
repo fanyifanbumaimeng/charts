@@ -16,8 +16,8 @@
     Chart.prototype.init=function(option){
         this.id= option.id;
         var cas = document.createElement("canvas")
-        cas.width = option.width;
-        cas.height = option.height;
+        this.width = cas.width = option.width;
+        this.height = cas.height = option.height;
         document.getElementById(this.id).appendChild(cas);
         this.ctx = cas.getContext("2d");
         this.series = option.series;
@@ -56,6 +56,7 @@
 
         var that = this;
         this.series.data.forEach(function(v,i){
+            that.ctx.save();
             that.ctx.beginPath();
             that.ctx.moveTo(that.x,that.y);
             var color = that.randomColor();
@@ -71,9 +72,39 @@
             that.ctx.strokeStyle = color;
 
             that.ctx.moveTo(that.x,that.y);
+            var midAngle = that.startAngle+that.radian[i]/2;
+            var endX = that.x+(that.radius+10)*Math.cos(midAngle);
+            var endY = that.y+(that.radius+10)*Math.sin(midAngle)
+            that.ctx.lineTo(endX,endY)
+            var textLength = that.ctx.measureText(that.series.data[i].name).width;
+
+
+            if(endX<that.x){
+                that.ctx.lineTo(endX-textLength,endY);
+                that.ctx.textAlign = "right";
+            }else{
+                that.ctx.lineTo(endX+textLength,endY);
+                that.ctx.textAlign = "left";
+            }
+            that.ctx.stroke()
+
+
+            that.ctx.fillText(that.series.data[i].name,endX,endY);
+
+
+
+
+
 
             that.startAngle+=that.radian[i]
+            that.ctx.restore();
         })
+        this.ctx.beginPath();
+        this.ctx.fillStyle = "blue"
+        //绘制title
+        if(this.title.x ===  "left"){
+            this.ctx.fillText(that.title.text,50,20)
+        }
 
     }
 
@@ -85,7 +116,12 @@
         y:200,
         radius:100,
         startAngle:0,
-        title:"饼状图",
+        title:{
+            text:"饼状图",
+            subtext:"纯属虚构",
+            x:"left",
+
+        },
         series:{
             name:"水果种类",
             type:"pie",
